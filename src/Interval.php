@@ -95,4 +95,34 @@ class Interval
     {
         return Duration::between($this->start, $this->end);
     }
+
+    /**
+     * Does this time interval contain the specified time interval.
+     *
+     * @param \Brick\DateTime\Interval $interval
+     *
+     * @return boolean
+     */
+    public function contains(Interval $interval)
+    {
+        $otherStart = $interval->start;
+        $otherEnd = $interval->end;
+        $thisStart = $this->start;
+        $thisEnd = $this->end;
+        return $thisStart->compareTo($otherStart) <= 0 && $otherStart->compareTo($thisEnd) < 0 && $otherEnd->compareTo($thisEnd) <= 0;
+    }
+
+    /**
+     * Does this time interval contain the specified instant.
+     *
+     * @param \Brick\DateTime\ReadableInstant $instant
+     *
+     * @return boolean
+     */
+    public function containsInstant(ReadableInstant $instant)
+    {
+        $thisStart = $this->start;
+        $thisEnd = $this->end;
+        return $instant->compareTo($thisStart) >= 0 && $instant->compareTo($thisEnd) < 0;
+    }
 }
