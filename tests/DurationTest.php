@@ -1041,6 +1041,90 @@ class DurationTest extends AbstractTestCase
     }
 
     /**
+     * @dataProvider providerGetDays
+     *
+     * @param integer $seconds       The duration in seconds.
+     * @param integer $expectedDays The expected total number of days.
+     */
+    public function testGetDays($seconds, $expectedDays)
+    {
+        $duration = Duration::ofSeconds($seconds);
+        $this->assertSame($expectedDays, $duration->getDays());
+    }
+
+    /**
+     * @return array
+     */
+    public function providerGetDays()
+    {
+        return [
+            [-172800, -2],
+            [ -86400, -1],
+            [ -86399,  0],
+            [      0,  0],
+            [  86399,  0],
+            [  86400,  1],
+            [ 172800,  2]
+        ];
+    }
+
+    /**
+     * @dataProvider providerGetHours
+     *
+     * @param integer $seconds       The duration in seconds.
+     * @param integer $expectedHours The expected total number of hours.
+     */
+    public function testGetHours($seconds, $expectedHours)
+    {
+        $duration = Duration::ofSeconds($seconds);
+        $this->assertSame($expectedHours, $duration->getHours());
+    }
+
+    /**
+     * @return array
+     */
+    public function providerGetHours()
+    {
+        return [
+            [-7201, -2],
+            [-3600, -1],
+            [-3599,  0],
+            [    0,  0],
+            [ 3599,  0],
+            [ 3600,  1],
+            [ 7201,  2]
+        ];
+    }
+
+    /**
+     * @dataProvider providerGetMinutes
+     *
+     * @param integer $seconds         The duration in seconds.
+     * @param integer $expectedMinutes The expected total number of minutes.
+     */
+    public function testGetMinutes($seconds, $expectedMinutes)
+    {
+        $duration = Duration::ofSeconds($seconds);
+        $this->assertSame($expectedMinutes, $duration->getMinutes());
+    }
+
+    /**
+     * @return array
+     */
+    public function providerGetMinutes()
+    {
+        return [
+            [-121, -2],
+            [ -60, -1],
+            [ -59,  0],
+            [   0,  0],
+            [  59,  0],
+            [  60,  1],
+            [ 121,  2]
+        ];
+    }
+
+    /**
      * @dataProvider providerGetTotalMillis
      *
      * @param integer $seconds        The duration in seconds.

@@ -591,6 +591,36 @@ class Duration
     }
 
     /**
+     * Returns the total number of days in this Duration.
+     *
+     * @return integer
+     */
+    public function getDays()
+    {
+        return Math::div($this->seconds, LocalTime::SECONDS_PER_DAY);
+    }
+
+    /**
+     * Returns the total number of hours in this Duration.
+     *
+     * @return integer
+     */
+    public function getHours()
+    {
+        return Math::div($this->seconds, LocalTime::SECONDS_PER_HOUR);
+    }
+
+    /**
+     * Returns the total number of minutes in this Duration.
+     *
+     * @return integer
+     */
+    public function getMinutes()
+    {
+        return Math::div($this->seconds, LocalTime::SECONDS_PER_MINUTE);
+    }
+
+    /**
      * Returns the total length in seconds of this Duration.
      *
      * @return integer
