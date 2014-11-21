@@ -3,6 +3,7 @@
 namespace Brick\DateTime\Tests;
 
 use Brick\DateTime\Duration;
+use Brick\DateTime\Instant;
 use Brick\DateTime\LocalDate;
 use Brick\DateTime\LocalDateTime;
 use Brick\DateTime\LocalTime;
@@ -22,6 +23,95 @@ class LocalDateTimeTest extends AbstractTestCase
 
         $this->assertLocalDateTimeIs(2001, 12, 23, 12, 34, 56, 987654321, LocalDateTime::of($date, $time));
     }
+
+    /**
+     * @dataProvider providerOfInstant
+     *
+     * @param integer $second The second to set the clock to.
+     * @param integer $nano   The nanosecond adjustment to the clock.
+     * @param integer $offset The time-zone offset to get the time at.
+     * @param integer $y      The expected year.
+     * @param integer $m      The expected month
+     * @param integer $d      The expected day.
+     * @param integer $h      The expected hour.
+     * @param integer $i      The expected minute.
+     * @param integer $s      The expected second.
+     * @param integer $n      The expected nano.
+     */
+    public function testOfInstant($second, $nano, $offset, $y, $m, $d, $h, $i, $s, $n)
+    {
+        $instant = Instant::of($second, $nano);
+        $timeZone = TimeZoneOffset::ofTotalSeconds($offset);
+        $dateTime = LocalDateTime::ofInstant($instant, $timeZone);
+        $this->assertLocalDateTimeIs($y, $m, $d, $h, $i, $s, $n, $dateTime);
+    }
+
+    /**
+     * @dataProvider providerOfInstant
+     *
+     * @param integer $second The second to set the clock to.
+     * @param integer $nano   The nanosecond adjustment to the clock.
+     * @param integer $offset The time-zone offset to get the time at.
+     * @param integer $y      The expected year.
+     * @param integer $m      The expected month
+     * @param integer $d      The expected day.
+     * @param integer $h      The expected hour.
+     * @param integer $i      The expected minute.
+     * @param integer $s      The expected second.
+     * @param integer $n      The expected nano.
+     */
+    public function testToEpochSecond($second, $nano, $offset, $y, $m, $d, $h, $i, $s, $n)
+    {
+        $date = LocalDate::of($y, $m, $d);
+        $time = LocalTime::of($h, $i, $s, $n);
+        $dateTime = LocalDateTime::of($date, $time);
+        $timeZone = TimeZoneOffset::ofTotalSeconds($offset);
+        $this->assertSame($second, $dateTime->toEpochSecond($timeZone));
+    }
+
+    /**
+     * @dataProvider providerOfInstant
+     *
+     * @param integer $second The second to set the clock to.
+     * @param integer $nano   The nanosecond adjustment to the clock.
+     * @param integer $offset The time-zone offset to get the time at.
+     * @param integer $y      The expected year.
+     * @param integer $m      The expected month
+     * @param integer $d      The expected day.
+     * @param integer $h      The expected hour.
+     * @param integer $i      The expected minute.
+     * @param integer $s      The expected second.
+     * @param integer $n      The expected nano.
+     */
+    public function testToInstant($second, $nano, $offset, $y, $m, $d, $h, $i, $s, $n)
+    {
+        $date = LocalDate::of($y, $m, $d);
+        $time = LocalTime::of($h, $i, $s, $n);
+        $dateTime = LocalDateTime::of($date, $time);
+        $timeZone = TimeZoneOffset::ofTotalSeconds($offset);
+        $instant = $dateTime->toInstant($timeZone);
+        $this->assertReadableInstantIs($second, $nano, $instant);
+    }
+
+    /**
+     * @return array
+     */
+    public function providerOfInstant()
+    {
+        return [
+            [   1409574896,         0,    0, 2014,  9,  1, 12, 34, 56,         0],
+            [   1409574896,       123,    0, 2014,  9,  1, 12, 34, 56,       123],
+            [   1409574896,         0, 3600, 2014,  9,  1, 13, 34, 56,         0],
+            [   1409574896,    123456, 5400, 2014,  9,  1, 14,  4, 56,    123456],
+            [            0,         0,    0, 1970,  1,  1,  0,  0,  0,         0],
+            [            1,         1,    0, 1970,  1,  1,  0,  0,  1,         1],
+            [           -1, 999999999,    0, 1969, 12, 31, 23, 59, 59, 999999999],
+            [ 24 * 60 * 60,         0,    0, 1970,  1,  2,  0,  0,  0,         0],
+            [-24 * 60 * 60,         0,    0, 1969, 12, 31,  0,  0,  0,         0],
+            [-24 * 60 * 60,         0,    0, 1969, 12, 31,  0,  0,  0,         0]
+        ];
+    }
+
 
     /**
      * @dataProvider providerNow

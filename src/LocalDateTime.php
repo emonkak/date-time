@@ -50,6 +50,25 @@ class LocalDateTime implements DateTimeAccessor
     }
 
     /**
+     * Creates a LocalDateTime from an instant.
+     *
+     * @param Instant $instant
+     * @param TimeZone $timeZone
+     *
+     * @return LocalDateTime
+     */
+    public static function ofInstant(Instant $instant, TimeZone $timeZone)
+    {
+        $localSecond = $instant->getEpochSecond() + $timeZone->getOffset($instant);
+        $localEpochDay = Math::floorDiv($localSecond, LocalTime::SECONDS_PER_DAY);
+        $secondOfDay = Math::floorMod($localSecond, LocalTime::SECONDS_PER_DAY);
+        $nano = $instant->getNano();
+        $date = LocalDate::ofEpochDay($localEpochDay);
+        $time = LocalTime::ofSecondOfDay($secondOfDay, $nano);
+        return new LocalDateTime($date, $time);
+    }
+
+    /**
      * @param TimeZone $timeZone
      *
      * @return LocalDateTime
@@ -181,6 +200,33 @@ class LocalDateTime implements DateTimeAccessor
     public function getNano()
     {
         return $this->time->getNano();
+    }
+
+    /**
+     * Converts this date-time to number of seconds since the epoch of 1970-01-01T00:00:00Z.
+     *
+     * @param TimeZone $timeZone
+     *
+     * @return integer
+     */
+    public function toEpochSecond(TimeZone $timeZone)
+    {
+        $epochDay = $this->date->toEpochDay();
+        $seconds = $epochDay * LocalTime::SECONDS_PER_DAY + $this->time->toSecondOfDay();
+        $seconds -= $timeZone->getOffset(Instant::of($seconds, $this->time->getNano()));
+        return $seconds;
+    }
+
+    /**
+     * Converts this date-time to a point in time.
+     *
+     * @param TimeZone $timeZone
+     *
+     * @return Instant
+     */
+    public function toInstant(TimeZone $timeZone)
+    {
+        return Instant::of($this->toEpochSecond($timeZone), $this->time->getNano());
     }
 
     /**
