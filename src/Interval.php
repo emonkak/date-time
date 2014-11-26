@@ -125,4 +125,20 @@ class Interval
         $thisEnd = $this->end;
         return $instant->compareTo($thisStart) >= 0 && $instant->compareTo($thisEnd) < 0;
     }
+
+    /**
+     * Does this time interval overlap the specified time interval.
+     *
+     * @param \Brick\DateTime\ReadableInstant $instant
+     *
+     * @return boolean
+     */
+    public function overlaps(Interval $interval)
+    {
+        $otherStart = $interval->start;
+        $otherEnd = $interval->end;
+        $thisStart = $this->start;
+        $thisEnd = $this->end;
+        return $thisStart->compareTo($otherEnd) < 0 && $otherStart->compareTo($thisEnd) < 0;
+    }
 }
