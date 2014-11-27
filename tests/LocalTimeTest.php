@@ -3,6 +3,7 @@
 namespace Brick\DateTime\Tests;
 
 use Brick\DateTime\Duration;
+use Brick\DateTime\Instant;
 use Brick\DateTime\LocalDate;
 use Brick\DateTime\LocalTime;
 use Brick\DateTime\TimeZoneOffset;
@@ -105,6 +106,38 @@ class LocalTimeTest extends AbstractTestCase
             [86400, 0],
             [0, -1],
             [0, 1000000000]
+        ];
+    }
+
+    /**
+     * @dataProvider providerOfInstant
+     *
+     * @param integer $second The second to set the clock to.
+     * @param integer $nano   The nanosecond adjustment to the clock.
+     * @param integer $offset The time-zone offset to get the time at.
+     * @param integer $h      The expected hour.
+     * @param integer $i      The expected minute.
+     * @param integer $s      The expected second.
+     * @param integer $n      The expected nano.
+     */
+    public function testOfInstant($second, $nano, $offset, $h, $i, $s, $n)
+    {
+        $instant = Instant::of($second, $nano);
+        $timeZone = TimeZoneOffset::ofTotalSeconds($offset);
+        $time = LocalTime::ofInstant($instant, $timeZone);
+        $this->assertLocalTimeIs($h, $i, $s, $n, $time);
+    }
+
+    /**
+     * @return array
+     */
+    public function providerOfInstant()
+    {
+        return [
+            [1409574896, 0,         0, 12, 34, 56,      0],
+            [1409574896, 123,       0, 12, 34, 56,    123],
+            [1409574896, 0,      3600, 13, 34, 56,      0],
+            [1409574896, 123456, 5400, 14,  4, 56, 123456]
         ];
     }
 

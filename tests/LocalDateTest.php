@@ -9,6 +9,7 @@ use Brick\DateTime\LocalDate;
 use Brick\DateTime\LocalTime;
 use Brick\DateTime\Period;
 use Brick\DateTime\TimeZone;
+use Brick\DateTime\TimeZoneOffset;
 use Brick\DateTime\Year;
 
 /**
@@ -124,6 +125,38 @@ class LocalDateTest extends AbstractTestCase
             [   10000, 1997,  5, 19],
             [  100000, 2243, 10, 17],
             [ 1000000, 4707, 11, 29]
+        ];
+    }
+
+    /**
+     * @dataProvider providerOfInstant
+     *
+     * @param integer $second The second to set the clock to.
+     * @param integer $nano   The nanosecond adjustment to the clock.
+     * @param integer $offset The time-zone offset to get the time at.
+     * @param integer $h      The expected hour.
+     * @param integer $i      The expected minute.
+     * @param integer $s      The expected second.
+     * @param integer $n      The expected nano.
+     */
+    public function testOfInstant($second, $nano, $offset, $y, $m, $d)
+    {
+        $instant = Instant::of($second, $nano);
+        $timeZone = TimeZoneOffset::ofTotalSeconds($offset);
+        $date = LocalDate::ofInstant($instant, $timeZone);
+        $this->assertLocalDateIs($y, $m, $d, $date);
+    }
+
+    /**
+     * @return array
+     */
+    public function providerOfInstant()
+    {
+        return [
+            [1409574896, 0,         0, 2014, 9, 1],
+            [1409574896, 123,       0, 2014, 9, 1],
+            [1409574896, 0,      3600, 2014, 9, 1],
+            [1409574896, 123456, 5400, 2014, 9, 1]
         ];
     }
 

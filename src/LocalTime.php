@@ -125,6 +125,22 @@ class LocalTime implements DateTimeAccessor
     }
 
     /**
+     * Creates a LocalTime from an instant.
+     *
+     * @param Instant $instant
+     * @param TimeZone $timeZone
+     *
+     * @return LocalTime
+     */
+    public static function ofInstant(Instant $instant, TimeZone $timeZone)
+    {
+        $localSecond = $instant->getEpochSecond() + $timeZone->getOffset($instant);
+        $secondOfDay = Math::floorMod($localSecond, LocalTime::SECONDS_PER_DAY);
+        $nano = $instant->getNano();
+        return LocalTime::ofSecondOfDay($secondOfDay, $nano);
+    }
+
+    /**
      * @param DateTimeParseResult $result
      *
      * @return LocalTime
