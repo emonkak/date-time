@@ -397,4 +397,40 @@ class IntervalTest extends AbstractTestCase
             ]
         ];
     }
+
+    /**
+     * @dataProvider providerIsEqualTo
+     *
+     * @param integer $s1             The 1st interval's start second.
+     * @param integer $n1             The 1st interval's start nano second.
+     * @param integer $s2             The 1nd interval's end second.
+     * @param integer $n2             The 1nd interval's end nano second.
+     * @param integer $s3             The 2st interval's start second.
+     * @param integer $n3             The 2st interval's start nano second.
+     * @param integer $s4             The 2nd interval's end second.
+     * @param integer $n4             The 2nd interval's end nano second.
+     * @param integer $expectedResult The expected result.
+     */
+    public function testIsEqualTo($s1, $n1, $s2, $n2, $s3, $n3, $s4, $n4, $expectedResult)
+    {
+        $interval1 = new Interval(Instant::of($s1, $n1), Instant::of($s2, $n2));
+        $interval2 = new Interval(Instant::of($s3, $n3), Instant::of($s4, $n4));
+
+        $this->assertSame($expectedResult, $interval1->isEqualTo($interval2));
+    }
+
+    /**
+     * @return array
+     */
+    public function providerIsEqualTo()
+    {
+        return [
+            [0, 0, 0, 0, 0, 0, 0, 0, true],
+            [0, 0, 1, 0, 0, 0, 1, 0, true],
+            [0, 0, 1, 0, 0, 0, 1, 1, false],
+            [0, 0, 1, 0, 1, 0, 1, 0, false],
+            [1, 0, 1, 0, 0, 0, 1, 0, false],
+            [1, 1, 1, 1, 1, 1, 1, 1, true],
+        ];
+    }
 }

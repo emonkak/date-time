@@ -143,6 +143,18 @@ class Interval
     }
 
     /**
+     * Checks if this Interval is equal to the specified time.
+     *
+     * @param Interval $that The interval to compare to.
+     *
+     * @return boolean
+     */
+    public function isEqualTo(Interval $that)
+    {
+        return $this->start->isEqualTo($that->start) && $this->end->isEqualTo($that->end);
+    }
+
+    /**
      * Does this time interval overlap the specified time interval.
      *
      * @param \Brick\DateTime\ReadableInstant $instant
