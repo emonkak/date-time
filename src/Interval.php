@@ -97,6 +97,22 @@ class Interval
     }
 
     /**
+     * Does this interval abut with the interval specified.
+     *
+     * @param \Brick\DateTime\Interval $interval
+     *
+     * @return boolean
+     */
+    public function abuts(Interval $interval)
+    {
+        $otherStart = $interval->start;
+        $otherEnd = $interval->end;
+        $thisStart = $this->start;
+        $thisEnd = $this->end;
+        return $otherEnd->isEqualTo($thisStart) || $thisEnd->isEqualTo($otherStart);
+    }
+
+    /**
      * Does this time interval contain the specified time interval.
      *
      * @param \Brick\DateTime\Interval $interval
