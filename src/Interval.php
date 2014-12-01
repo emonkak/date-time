@@ -87,6 +87,48 @@ class Interval
     }
 
     /**
+     * Gets the overlap between this interval and another interval.
+     *
+     * @param \Brick\DateTime\Interval $interval
+     *
+     * @return \Brick\DateTime\Interval
+     */
+    public function overlap(Interval $interval)
+    {
+        if (!$this->overlaps($interval)) {
+            return null;
+        }
+        $otherStart = $interval->start;
+        $otherEnd = $interval->end;
+        $thisStart = $this->start;
+        $thisEnd = $this->end;
+        $start = $thisStart->isAfter($otherStart) ? $thisStart : $otherStart;
+        $end = $thisEnd->isBefore($otherEnd) ? $thisEnd : $otherEnd;
+        return new Interval($start, $end);
+    }
+
+    /**
+     * Gets the union between this interval and another interval.
+     *
+     * @param \Brick\DateTime\Interval $interval
+     *
+     * @return \Brick\DateTime\Interval
+     */
+    public function union(Interval $interval)
+    {
+        if (!$this->overlaps($interval)) {
+            return null;
+        }
+        $otherStart = $interval->start;
+        $otherEnd = $interval->end;
+        $thisStart = $this->start;
+        $thisEnd = $this->end;
+        $start = $thisStart->isBefore($otherStart) ? $thisStart : $otherStart;
+        $end = $thisEnd->isAfter($otherEnd) ? $thisEnd : $otherEnd;
+        return new Interval($start, $end);
+    }
+
+    /**
      * Returns a Duration representing the time elapsed in this Interval.
      *
      * @return \Brick\DateTime\Duration

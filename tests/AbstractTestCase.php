@@ -7,6 +7,7 @@ use Brick\DateTime\Clock\FixedClock;
 use Brick\DateTime\DayOfWeek;
 use Brick\DateTime\Duration;
 use Brick\DateTime\Instant;
+use Brick\DateTime\Interval;
 use Brick\DateTime\LocalDate;
 use Brick\DateTime\LocalDateRange;
 use Brick\DateTime\LocalDateTime;
@@ -44,6 +45,23 @@ abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase
         $this->compare([$epochSecond, $nano], [
             $instant->getEpochSecond(),
             $instant->getNano()
+        ]);
+    }
+
+    /**
+     * @param integer  $s1      The expected epoch second of the start instant.
+     * @param integer  $n1      The expected nanosecond adjustment of the start instant..
+     * @param integer  $s1      The expected epoch second of the start instant.
+     * @param integer  $n1      The expected nanosecond adjustment of the start instant..
+     * @param Interval $interal The interal to test.
+     */
+    protected function assertIntervalIs($s1, $n1, $s2, $n2, Interval $interval)
+    {
+        $this->compare([$s1, $n1, $s2, $n2], [
+            $interval->getStart()->getEpochSecond(),
+            $interval->getStart()->getNano(),
+            $interval->getEnd()->getEpochSecond(),
+            $interval->getEnd()->getNano()
         ]);
     }
 

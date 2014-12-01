@@ -8,6 +8,114 @@ use Brick\DateTime\Interval;
 class IntervalTest extends AbstractTestCase
 {
     /**
+     * @dataProvider providerOverlap
+     *
+     * @param array      $first    The 1st interval's start and end pair.
+     * @param array      $second   The 1st interval's start and end pair.
+     * @param array|null $expected The expected interval's start and end pair.
+     */
+    public function testOverlap(array $first, array $second, $expected)
+    {
+        $firstInterval = new Interval(Instant::of($first[0]), Instant::of($first[1]));
+        $secondInterval = new Interval(Instant::of($second[0]), Instant::of($second[1]));
+
+        if ($expected !== null) {
+            $this->assertIntervalIs($expected[0], 0, $expected[1], 0, $firstInterval->overlap($secondInterval));
+            $this->assertIntervalIs($expected[0], 0, $expected[1], 0, $secondInterval->overlap($firstInterval));
+        } else {
+            $this->assertNull($firstInterval->overlap($secondInterval));
+            $this->assertNull($secondInterval->overlap($firstInterval));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function providerOverlap()
+    {
+        return [
+            [[3, 7], [1, 2],   null],  // gap before
+            [[3, 7], [2, 2],   null],  // gap before
+
+            [[3, 7], [2, 3],   null],  // abuts before
+            [[3, 7], [3, 3],   null],  // abuts before
+
+            [[3, 7], [2, 4], [3, 4]],  // truncated start
+            [[3, 7], [3, 4], [3, 4]],
+            [[3, 7], [4, 4], [4, 4]],
+
+            [[3, 7], [2, 7], [3, 7]],  // truncated start
+            [[3, 7], [3, 7], [3, 7]],
+            [[3, 7], [4, 7], [4, 7]],
+            [[3, 7], [5, 7], [5, 7]],
+            [[3, 7], [6, 7], [6, 7]],
+            [[3, 7], [7, 7],   null],  // abuts after
+
+            [[3, 7], [2, 8], [3, 7]],  // truncated start and end
+            [[3, 7], [3, 8], [3, 7]],  // truncated end
+            [[3, 7], [4, 8], [4, 7]],  // truncated end
+            [[3, 7], [5, 8], [5, 7]],  // truncated end
+            [[3, 7], [6, 8], [6, 7]],  // truncated end
+            [[3, 7], [7, 8],   null],  // abuts after
+            [[3, 7], [8, 8],   null],  // gap after
+        ];
+    }
+
+    /**
+     * @dataProvider providerUnion
+     *
+     * @param array      $first    The 1st interval's start and end pair.
+     * @param array      $second   The 1st interval's start and end pair.
+     * @param array|null $expected The expected interval's start and end pair.
+     */
+    public function testUnion(array $first, array $second, $expected)
+    {
+        $firstInterval = new Interval(Instant::of($first[0]), Instant::of($first[1]));
+        $secondInterval = new Interval(Instant::of($second[0]), Instant::of($second[1]));
+
+        if ($expected !== null) {
+            $this->assertIntervalIs($expected[0], 0, $expected[1], 0, $firstInterval->union($secondInterval));
+            $this->assertIntervalIs($expected[0], 0, $expected[1], 0, $secondInterval->union($firstInterval));
+        } else {
+            $this->assertNull($firstInterval->union($secondInterval));
+            $this->assertNull($secondInterval->union($firstInterval));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function providerUnion()
+    {
+        return [
+            [[3, 7], [1, 2],   null],  // gap before
+            [[3, 7], [2, 2],   null],  // gap before
+
+            [[3, 7], [2, 3],   null],  // abuts before
+            [[3, 7], [3, 3],   null],  // abuts before
+
+            [[3, 7], [2, 4], [2, 7]],  // truncated start
+            [[3, 7], [3, 4], [3, 7]],
+            [[3, 7], [4, 4], [3, 7]],
+
+            [[3, 7], [2, 7], [2, 7]],  // truncated start
+            [[3, 7], [3, 7], [3, 7]],
+            [[3, 7], [4, 7], [3, 7]],
+            [[3, 7], [5, 7], [3, 7]],
+            [[3, 7], [6, 7], [3, 7]],
+            [[3, 7], [7, 7],   null],  // abuts after
+
+            [[3, 7], [2, 8], [2, 8]],  // truncated start and end
+            [[3, 7], [3, 8], [3, 8]],  // truncated end
+            [[3, 7], [4, 8], [3, 8]],  // truncated end
+            [[3, 7], [5, 8], [3, 8]],  // truncated end
+            [[3, 7], [6, 8], [3, 8]],  // truncated end
+            [[3, 7], [7, 8],   null],  // abuts after
+            [[3, 7], [8, 8],   null]   // gap after
+        ];
+    }
+
+    /**
      * @dataProvider providerAbuts
      *
      * @param integer $h1             The 1st interval's start hour.
