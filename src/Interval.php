@@ -211,4 +211,12 @@ class Interval
         $thisEnd = $this->end;
         return $thisStart->compareTo($otherEnd) < 0 && $otherStart->compareTo($thisEnd) < 0;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return '[' . $this->start . ', ' . $this->end . ')';
+    }
 }
