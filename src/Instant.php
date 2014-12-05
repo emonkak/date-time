@@ -116,6 +116,58 @@ class Instant extends ReadableInstant
     }
 
     /**
+     * Returns the smallest ReadableInstant of an array.
+     *
+     * @param LocalTime[] $times An array of ReadableInstant objects.
+     *
+     * @return ReadableInstant The smallest ReadableInstant object.
+     *
+     * @throws DateTimeException If the array is empty.
+     */
+    public static function minOf(array $instants)
+    {
+        if (count($instants) == 0) {
+            throw new DateTimeException('Localinstant::maxOf() does not accept less than 1 parameter');
+        }
+
+        $min = Instant::max();
+
+        foreach ($instants as $instant) {
+            if ($instant->isBefore($min)) {
+                $min = $instant;
+            }
+        }
+
+        return $min;
+    }
+
+    /**
+     * Returns the highest ReadableInstant of an array.
+     *
+     * @param LocalTime[] $times An array of ReadableInstant objects.
+     *
+     * @return ReadableInstant The highest ReadableInstant object.
+     *
+     * @throws DateTimeException If the array is empty.
+     */
+    public static function maxOf(array $instants)
+    {
+        if (count($instants) == 0) {
+            throw new DateTimeException('Localinstant::maxOf() does not accept less than 1 parameter');
+        }
+
+        $max = Instant::min();
+
+        foreach ($instants as $instant) {
+            if ($instant->isAfter($max)) {
+                $max = $instant;
+            }
+        }
+
+        return $max;
+    }
+
+    /**
      * @param Duration $duration
      *
      * @return Instant

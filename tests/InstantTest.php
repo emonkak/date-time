@@ -66,6 +66,33 @@ class InstantTest extends AbstractTestCase
         $this->assertReadableInstantIs(PHP_INT_MAX, 999999999, Instant::max());
     }
 
+    public function testMinMaxOf()
+    {
+        $a = Instant::of(1, 0);
+        $b = Instant::of(1, 1);
+        $c = Instant::of(2, 0);
+        $d = Instant::of(2, 1);
+
+        $this->assertSame($a, Instant::minOf([$a, $b, $c, $d]));
+        $this->assertSame($d, Instant::maxOf([$a, $b, $c, $d]));
+    }
+
+    /**
+     * @expectedException \Brick\DateTime\DateTimeException
+     */
+    public function testMinOfEmptyInstantsThrowsException()
+    {
+        Instant::minOf([]);
+    }
+
+    /**
+     * @expectedException \Brick\DateTime\DateTimeException
+     */
+    public function testMaxOfEmptyInstantsThrowsException()
+    {
+        Instant::maxOf([]);
+    }
+
     /**
      * @dataProvider providerPlus
      *
