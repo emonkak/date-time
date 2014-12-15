@@ -87,6 +87,28 @@ class Interval
     }
 
     /**
+     * Gets the gap between this interval and another interval.
+     *
+     * @param \Brick\DateTime\Interval $interval
+     *
+     * @return \Brick\DateTime\Interval
+     */
+    public function gap(Interval $interval)
+    {
+        $otherStart = $interval->start;
+        $otherEnd = $interval->end;
+        $thisStart = $this->start;
+        $thisEnd = $this->end;
+        if ($thisStart->isAfter($otherEnd)) {
+            return new Interval($otherEnd, $thisStart);
+        } else if ($otherStart->isAfter($thisEnd)) {
+            return new Interval($thisEnd, $otherStart);
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Gets the overlap between this interval and another interval.
      *
      * @param \Brick\DateTime\Interval $interval

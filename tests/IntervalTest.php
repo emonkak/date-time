@@ -8,6 +8,51 @@ use Brick\DateTime\Interval;
 class IntervalTest extends AbstractTestCase
 {
     /**
+     * @dataProvider providerGap
+     *
+     * @param array      $first    The 1st interval's start and end pair.
+     * @param array      $second   The 1st interval's start and end pair.
+     * @param array|null $expected The expected interval's start and end pair.
+     */
+    public function testGap(array $first, array $second, $expected)
+    {
+        $firstInterval = new Interval(Instant::of($first[0]), Instant::of($first[1]));
+        $secondInterval = new Interval(Instant::of($second[0]), Instant::of($second[1]));
+
+        if ($expected !== null) {
+            $this->assertIntervalIs($expected[0], 0, $expected[1], 0, $firstInterval->gap($secondInterval));
+            $this->assertIntervalIs($expected[0], 0, $expected[1], 0, $secondInterval->gap($firstInterval));
+        } else {
+            $this->assertNull($firstInterval->gap($secondInterval));
+            $this->assertNull($secondInterval->gap($firstInterval));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function providerGap()
+    {
+        return [
+            [[3, 7], [0, 1], [1, 3]],
+            [[3, 7], [1, 1], [1, 3]],
+            [[3, 7], [2, 3], null],  // abuts before
+            [[3, 7], [3, 3], null],  // abuts before
+            [[3, 7], [4, 6], null],  // overlaps
+            [[3, 7], [3, 7], null],  // overlaps
+            [[3, 7], [6, 7], null],  // overlaps
+            [[3, 7], [7, 7], null],  // abuts before
+            [[3, 7], [6, 8], null],  // overlaps
+            [[3, 7], [7, 8], null],  // abuts after
+            [[3, 7], [8, 8], [7, 8]],
+            [[3, 7], [6, 9], null],  // overlaps
+            [[3, 7], [7, 9], null],  // abuts after
+            [[3, 7], [8, 9], [7, 8]],
+            [[3, 7], [9, 9], [7, 9]]
+        ];
+    }
+
+    /**
      * @dataProvider providerOverlap
      *
      * @param array      $first    The 1st interval's start and end pair.
