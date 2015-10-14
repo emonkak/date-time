@@ -581,9 +581,29 @@ class LocalDate implements DateTimeAccessor
      *
      * @return boolean
      */
+    public function isBeforeOrEqualTo(LocalDate $that)
+    {
+        return $this->compareTo($that) <= 0;
+    }
+
+    /**
+     * @param LocalDate $that
+     *
+     * @return boolean
+     */
     public function isAfter(LocalDate $that)
     {
         return $this->compareTo($that) === 1;
+    }
+
+    /**
+     * @param LocalDate $that
+     *
+     * @return boolean
+     */
+    public function isAfterOrEqualTo(LocalDate $that)
+    {
+        return $this->compareTo($that) >= 0;
     }
 
     /**
@@ -635,7 +655,7 @@ class LocalDate implements DateTimeAccessor
      */
     public function atTime(LocalTime $time)
     {
-        return LocalDateTime::of($this, $time);
+        return new LocalDateTime($this, $time);
     }
 
     /**

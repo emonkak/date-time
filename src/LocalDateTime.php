@@ -27,25 +27,35 @@ class LocalDateTime implements DateTimeAccessor
     private $time;
 
     /**
-     * Private constructor. Use a factory method to obtain an instance.
+     * Class constructor.
      *
      * @param LocalDate $date
      * @param LocalTime $time
      */
-    private function __construct(LocalDate $date, LocalTime $time)
+    public function __construct(LocalDate $date, LocalTime $time)
     {
         $this->date = $date;
         $this->time = $time;
     }
 
     /**
-     * @param LocalDate $date
-     * @param LocalTime $time
+     * @param integer $year   The year, from MIN_YEAR to MAX_YEAR.
+     * @param integer $month  The month-of-year, from 1 (January) to 12 (December).
+     * @param integer $day    The day-of-month, from 1 to 31.
+     * @param integer $hour   The hour-of-day, from 0 to 23.
+     * @param integer $minute The minute-of-hour, from 0 to 59.
+     * @param integer $second The second-of-minute, from 0 to 59.
+     * @param integer $nano   The nano-of-second, from 0 to 999,999,999.
      *
      * @return LocalDateTime
+     *
+     * @throws DateTimeException If the date or time is not valid.
      */
-    public static function of(LocalDate $date, LocalTime $time)
+    public static function of($year, $month, $day, $hour = 0, $minute = 0, $second = 0, $nano = 0)
     {
+        $date = LocalDate::of($year, $month, $day);
+        $time = LocalTime::of($hour, $minute, $second, $nano);
+
         return new LocalDateTime($date, $time);
     }
 
@@ -112,6 +122,78 @@ class LocalDateTime implements DateTimeAccessor
         }
 
         return LocalDateTime::from($parser->parse($text));
+    }
+
+    /**
+     * Returns the smallest possible value for LocalDateTime.
+     *
+     * @return LocalDateTime
+     */
+    public static function min()
+    {
+        return new LocalDateTime(LocalDate::min(), LocalTime::min());
+    }
+
+    /**
+     * Returns the highest possible value for LocalDateTime.
+     *
+     * @return LocalDateTime
+     */
+    public static function max()
+    {
+        return new LocalDateTime(LocalDate::max(), LocalTime::max());
+    }
+
+    /**
+     * Returns the smallest LocalDateTime among the given values.
+     *
+     * @param LocalDateTime ... $times The LocalDateTime objects to compare.
+     *
+     * @return LocalDateTime The earliest LocalDateTime object.
+     *
+     * @throws DateTimeException If the array is empty.
+     */
+    public static function minOf(LocalDateTime ... $times)
+    {
+        if (! $times) {
+            throw new DateTimeException(__METHOD__ . ' does not accept less than 1 parameter.');
+        }
+
+        $min = LocalDateTime::max();
+
+        foreach ($times as $time) {
+            if ($time->isBefore($min)) {
+                $min = $time;
+            }
+        }
+
+        return $min;
+    }
+
+    /**
+     * Returns the highest LocalDateTime among the given values.
+     *
+     * @param LocalDateTime ... $times The LocalDateTime objects to compare.
+     *
+     * @return LocalDateTime The latest LocalDateTime object.
+     *
+     * @throws DateTimeException If the array is empty.
+     */
+    public static function maxOf(LocalDateTime ... $times)
+    {
+        if (! $times) {
+            throw new DateTimeException(__METHOD__ . ' does not accept less than 1 parameter.');
+        }
+
+        $max = LocalDateTime::min();
+
+        foreach ($times as $time) {
+            if ($time->isAfter($max)) {
+                $max = $time;
+            }
+        }
+
+        return $max;
     }
 
     /**
@@ -755,9 +837,29 @@ class LocalDateTime implements DateTimeAccessor
      *
      * @return boolean
      */
+    public function isBeforeOrEqualTo(LocalDateTime $that)
+    {
+        return $this->compareTo($that) <= 0;
+    }
+
+    /**
+     * @param LocalDateTime $that
+     *
+     * @return boolean
+     */
     public function isAfter(LocalDateTime $that)
     {
         return $this->compareTo($that) === 1;
+    }
+
+    /**
+     * @param LocalDateTime $that
+     *
+     * @return boolean
+     */
+    public function isAfterOrEqualTo(LocalDateTime $that)
+    {
+        return $this->compareTo($that) >= 0;
     }
 
     /**

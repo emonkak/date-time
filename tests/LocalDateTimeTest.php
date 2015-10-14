@@ -3,6 +3,7 @@
 namespace Brick\DateTime\Tests;
 
 use Brick\DateTime\Duration;
+use Brick\DateTime\Field\Year;
 use Brick\DateTime\Instant;
 use Brick\DateTime\LocalDate;
 use Brick\DateTime\LocalDateTime;
@@ -21,7 +22,7 @@ class LocalDateTimeTest extends AbstractTestCase
         $date = LocalDate::of(2001, 12, 23);
         $time = LocalTime::of(12, 34, 56, 987654321);
 
-        $this->assertLocalDateTimeIs(2001, 12, 23, 12, 34, 56, 987654321, LocalDateTime::of($date, $time));
+        $this->assertLocalDateTimeIs(2001, 12, 23, 12, 34, 56, 987654321, new LocalDateTime($date, $time));
     }
 
     /**
@@ -62,9 +63,7 @@ class LocalDateTimeTest extends AbstractTestCase
      */
     public function testToEpochSecond($second, $nano, $offset, $y, $m, $d, $h, $i, $s, $n)
     {
-        $date = LocalDate::of($y, $m, $d);
-        $time = LocalTime::of($h, $i, $s, $n);
-        $dateTime = LocalDateTime::of($date, $time);
+        $dateTime = LocalDateTime::of($y, $m, $d, $h, $i, $s, $n);
         $timeZone = TimeZoneOffset::ofTotalSeconds($offset);
         $this->assertSame($second, $dateTime->toEpochSecond($timeZone));
     }
@@ -85,9 +84,7 @@ class LocalDateTimeTest extends AbstractTestCase
      */
     public function testToInstant($second, $nano, $offset, $y, $m, $d, $h, $i, $s, $n)
     {
-        $date = LocalDate::of($y, $m, $d);
-        $time = LocalTime::of($h, $i, $s, $n);
-        $dateTime = LocalDateTime::of($date, $time);
+        $dateTime = LocalDateTime::of($y, $m, $d, $h, $i, $s, $n);
         $timeZone = TimeZoneOffset::ofTotalSeconds($offset);
         $instant = $dateTime->toInstant($timeZone);
         $this->assertReadableInstantIs($second, $nano, $instant);
@@ -246,6 +243,42 @@ class LocalDateTimeTest extends AbstractTestCase
         ];
     }
 
+    public function testMin()
+    {
+        $this->assertLocalDateTimeIs(Year::MIN_VALUE, 1, 1, 0, 0, 0, 0, LocalDateTime::min());
+    }
+
+    public function testMax()
+    {
+        $this->assertLocalDateTimeIs(Year::MAX_VALUE, 12, 31, 23, 59, 59, 999999999, LocalDateTime::max());
+    }
+
+    public function testMinMaxOf()
+    {
+        $a = LocalDateTime::parse('2003-12-31T12:30:00');
+        $b = LocalDateTime::parse('2005-12-31T23:59:59.999999999');
+        $c = LocalDateTime::parse('2006-07-12T05:22:11');
+
+        $this->assertSame($a, LocalDateTime::minOf($a, $b, $c));
+        $this->assertSame($c, LocalDateTime::maxOf($a, $b, $c));
+    }
+
+    /**
+     * @expectedException \Brick\DateTime\DateTimeException
+     */
+    public function testMinOfZeroElementsThrowsException()
+    {
+        LocalDateTime::minOf();
+    }
+
+    /**
+     * @expectedException \Brick\DateTime\DateTimeException
+     */
+    public function testMaxOfZeroElementsThrowsException()
+    {
+        LocalDateTime::maxOf();
+    }
+
     /**
      * @dataProvider providerGetDayOfWeek
      *
@@ -256,10 +289,8 @@ class LocalDateTimeTest extends AbstractTestCase
      */
     public function testGetDayOfWeek($year, $month, $day, $dayOfWeek)
     {
-        $date = LocalDate::of($year, $month, $day);
-        $time = LocalTime::of(15, 30, 45);
-
-        $this->assertDayOfWeekIs($dayOfWeek, LocalDateTime::of($date, $time)->getDayOfWeek());
+        $dateTime = LocalDateTime::of($year, $month, $day, 15, 30, 45);
+        $this->assertDayOfWeekIs($dayOfWeek, $dateTime->getDayOfWeek());
     }
 
     /**
