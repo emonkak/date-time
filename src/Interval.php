@@ -130,6 +130,24 @@ class Interval
     }
 
     /**
+     * Gets the covered interval between this interval and another interval.
+     *
+     * @param \Brick\DateTime\Interval $interval
+     *
+     * @return \Brick\DateTime\Interval
+     */
+    public function cover(Interval $interval)
+    {
+        $otherStart = $interval->start;
+        $otherEnd = $interval->end;
+        $thisStart = $this->start;
+        $thisEnd = $this->end;
+        $start = $thisStart->isBefore($otherStart) ? $thisStart : $otherStart;
+        $end = $thisEnd->isAfter($otherEnd) ? $thisEnd : $otherEnd;
+        return new Interval($start, $end);
+    }
+
+    /**
      * Gets the union between this interval and another interval.
      *
      * @param \Brick\DateTime\Interval $interval
@@ -141,13 +159,22 @@ class Interval
         if (!$this->overlaps($interval)) {
             return null;
         }
-        $otherStart = $interval->start;
-        $otherEnd = $interval->end;
-        $thisStart = $this->start;
-        $thisEnd = $this->end;
-        $start = $thisStart->isBefore($otherStart) ? $thisStart : $otherStart;
-        $end = $thisEnd->isAfter($otherEnd) ? $thisEnd : $otherEnd;
-        return new Interval($start, $end);
+        return $this->cover($interval);
+    }
+
+    /**
+     * Joins the interval between the adjacent.
+     *
+     * @param \Brick\DateTime\Interval $interval
+     *
+     * @return \Brick\DateTime\Interval
+     */
+    public function join(Interval $interval)
+    {
+        if (!$this->abuts($interval)) {
+            return null;
+        }
+        return $this->cover($interval);
     }
 
     /**

@@ -107,6 +107,55 @@ class IntervalTest extends AbstractTestCase
     }
 
     /**
+     * @dataProvider providerCover
+     *
+     * @param array      $first    The 1st interval's start and end pair.
+     * @param array      $second   The 1st interval's start and end pair.
+     * @param array|null $expected The expected interval's start and end pair.
+     */
+    public function testCover(array $first, array $second, $expected)
+    {
+        $firstInterval = new Interval(Instant::of($first[0]), Instant::of($first[1]));
+        $secondInterval = new Interval(Instant::of($second[0]), Instant::of($second[1]));
+
+        $this->assertIntervalIs($expected[0], 0, $expected[1], 0, $firstInterval->cover($secondInterval));
+        $this->assertIntervalIs($expected[0], 0, $expected[1], 0, $secondInterval->cover($firstInterval));
+    }
+
+    /**
+     * @return array
+     */
+    public function providerCover()
+    {
+        return [
+            [[3, 7], [1, 2], [1, 7]],  // gap before
+            [[3, 7], [2, 2], [2, 7]],  // gap before
+
+            [[3, 7], [2, 3], [2, 7]],  // abuts before
+            [[3, 7], [3, 3], [3, 7]],  // abuts before
+
+            [[3, 7], [2, 4], [2, 7]],  // truncated start
+            [[3, 7], [3, 4], [3, 7]],
+            [[3, 7], [4, 4], [3, 7]],
+
+            [[3, 7], [2, 7], [2, 7]],  // truncated start
+            [[3, 7], [3, 7], [3, 7]],
+            [[3, 7], [4, 7], [3, 7]],
+            [[3, 7], [5, 7], [3, 7]],
+            [[3, 7], [6, 7], [3, 7]],
+            [[3, 7], [7, 7], [3, 7]],  // abuts after
+
+            [[3, 7], [2, 8], [2, 8]],  // truncated start and end
+            [[3, 7], [3, 8], [3, 8]],  // truncated end
+            [[3, 7], [4, 8], [3, 8]],  // truncated end
+            [[3, 7], [5, 8], [3, 8]],  // truncated end
+            [[3, 7], [6, 8], [3, 8]],  // truncated end
+            [[3, 7], [7, 8], [3, 8]],  // abuts after
+            [[3, 7], [8, 8], [3, 8]]   // gap after
+        ];
+    }
+
+    /**
      * @dataProvider providerUnion
      *
      * @param array      $first    The 1st interval's start and end pair.
@@ -156,6 +205,60 @@ class IntervalTest extends AbstractTestCase
             [[3, 7], [5, 8], [3, 8]],  // truncated end
             [[3, 7], [6, 8], [3, 8]],  // truncated end
             [[3, 7], [7, 8],   null],  // abuts after
+            [[3, 7], [8, 8],   null]   // gap after
+        ];
+    }
+
+    /**
+     * @dataProvider providerJoin
+     *
+     * @param array      $first    The 1st interval's start and end pair.
+     * @param array      $second   The 1st interval's start and end pair.
+     * @param array|null $expected The expected interval's start and end pair.
+     */
+    public function testJoin(array $first, array $second, $expected)
+    {
+        $firstInterval = new Interval(Instant::of($first[0]), Instant::of($first[1]));
+        $secondInterval = new Interval(Instant::of($second[0]), Instant::of($second[1]));
+
+        if ($expected !== null) {
+            $this->assertIntervalIs($expected[0], 0, $expected[1], 0, $firstInterval->join($secondInterval));
+            $this->assertIntervalIs($expected[0], 0, $expected[1], 0, $secondInterval->join($firstInterval));
+        } else {
+            $this->assertNull($firstInterval->join($secondInterval));
+            $this->assertNull($secondInterval->join($firstInterval));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function providerJoin()
+    {
+        return [
+            [[3, 7], [1, 2],   null],  // gap before
+            [[3, 7], [2, 2],   null],  // gap before
+
+            [[3, 7], [2, 3], [2, 7]],  // abuts before
+            [[3, 7], [3, 3], [3, 7]],  // abuts before
+
+            [[3, 7], [2, 4],   null],  // truncated start
+            [[3, 7], [3, 4],   null],
+            [[3, 7], [4, 4],   null],
+
+            [[3, 7], [2, 7],   null],  // truncated start
+            [[3, 7], [3, 7],   null],
+            [[3, 7], [4, 7],   null],
+            [[3, 7], [5, 7],   null],
+            [[3, 7], [6, 7],   null],
+            [[3, 7], [7, 7], [3, 7]],  // abuts after
+
+            [[3, 7], [2, 8],   null],  // truncated start and end
+            [[3, 7], [3, 8],   null],  // truncated end
+            [[3, 7], [4, 8],   null],  // truncated end
+            [[3, 7], [5, 8],   null],  // truncated end
+            [[3, 7], [6, 8],   null],  // truncated end
+            [[3, 7], [7, 8], [3, 8]],  // abuts after
             [[3, 7], [8, 8],   null]   // gap after
         ];
     }
