@@ -259,8 +259,8 @@ class LocalDateTimeTest extends AbstractTestCase
         $b = LocalDateTime::parse('2005-12-31T23:59:59.999999999');
         $c = LocalDateTime::parse('2006-07-12T05:22:11');
 
-        $this->assertSame($a, LocalDateTime::minOf($a, $b, $c));
-        $this->assertSame($c, LocalDateTime::maxOf($a, $b, $c));
+        $this->assertSame($a, LocalDateTime::minOf([$a, $b, $c]));
+        $this->assertSame($c, LocalDateTime::maxOf([$a, $b, $c]));
     }
 
     /**
@@ -268,7 +268,7 @@ class LocalDateTimeTest extends AbstractTestCase
      */
     public function testMinOfZeroElementsThrowsException()
     {
-        LocalDateTime::minOf();
+        LocalDateTime::minOf([]);
     }
 
     /**
@@ -276,7 +276,7 @@ class LocalDateTimeTest extends AbstractTestCase
      */
     public function testMaxOfZeroElementsThrowsException()
     {
-        LocalDateTime::maxOf();
+        LocalDateTime::maxOf([]);
     }
 
     /**

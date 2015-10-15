@@ -1160,8 +1160,8 @@ class LocalTimeTest extends AbstractTestCase
         $b = LocalTime::of(14, 30);
         $c = LocalTime::of(17, 15);
 
-        $this->assertSame($a, LocalTime::minOf($a, $b, $c));
-        $this->assertSame($c, LocalTime::maxOf($a, $b, $c));
+        $this->assertSame($a, LocalTime::minOf([$a, $b, $c]));
+        $this->assertSame($c, LocalTime::maxOf([$a, $b, $c]));
     }
 
     /**
@@ -1169,7 +1169,7 @@ class LocalTimeTest extends AbstractTestCase
      */
     public function testMinOfZeroElementsThrowsException()
     {
-        LocalTime::minOf();
+        LocalTime::minOf([]);
     }
 
     /**
@@ -1177,6 +1177,6 @@ class LocalTimeTest extends AbstractTestCase
      */
     public function testMaxOfZeroElementsThrowsException()
     {
-        LocalTime::maxOf();
+        LocalTime::maxOf([]);
     }
 }
