@@ -209,12 +209,12 @@ class LocalDate implements DateTimeAccessor
     /**
      * Creates a LocalDate from an instant.
      *
-     * @param Instant $instant
-     * @param TimeZone $timeZone
+     * @param ReadableInstant $instant
+     * @param TimeZone        $timeZone
      *
      * @return LocalDate
      */
-    public static function ofInstant(Instant $instant, TimeZone $timeZone)
+    public static function ofInstant(ReadableInstant $instant, TimeZone $timeZone)
     {
         $localSecond = $instant->getEpochSecond() + $timeZone->getOffset($instant);
         $localEpochDay = Math::floorDiv($localSecond, LocalTime::SECONDS_PER_DAY);

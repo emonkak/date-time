@@ -120,12 +120,12 @@ class ZonedDateTime extends ReadableInstant implements DateTimeAccessor
      *
      * This resolves the instant to a date and time without ambiguity.
      *
-     * @param Instant  $instant  The instant.
-     * @param TimeZone $timeZone The time zone.
+     * @param ReadableInstant $instant  The instant.
+     * @param TimeZone        $timeZone The time zone.
      *
      * @return ZonedDateTime
      */
-    public static function ofInstant(Instant $instant, TimeZone $timeZone)
+    public static function ofInstant(ReadableInstant $instant, TimeZone $timeZone)
     {
         $dateTimeZone = $timeZone->toDateTimeZone();
 
