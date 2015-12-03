@@ -304,6 +304,59 @@ class Instant extends ReadableInstant
     }
 
     /**
+     * Returns a copy of this with the time truncated.
+     *
+     * @param Duration $unit
+     *
+     * @return Instant
+     *
+     * @throws DateTimeException if the unit is not supported
+     */
+    public function truncatedTo(Duration $unit)
+    {
+        $remainder = $this->modulo($unit);
+        return $this->minus($remainder);
+    }
+
+    /**
+     * Returns a copy of this with the time rounded.
+     *
+     * @param Duration $unit
+     *
+     * @return Instant
+     *
+     * @throws DateTimeException if the unit is not supported
+     */
+    public function roundedTo(Duration $unit)
+    {
+        $remainder = $this->modulo($unit);
+        if ($remainder->plus($remainder)->isLessThan($unit)) {
+            return $this->minus($remainder);
+        }
+        return $this->plus($unit->minus($remainder));
+    }
+
+    /**
+     * @param Duration $unit
+     *
+     * @return Duration
+     *
+     * @throws DateTimeException if the unit is not supported
+     */
+    private function modulo(Duration $unit)
+    {
+        if ($unit->getSeconds() > LocalTime::SECONDS_PER_DAY) {
+            throw new DateTimeException('Unit is too large to be used for modulo');
+        }
+        $unitNanos = $unit->getTotalNanos();
+        if ((LocalTime::NANOS_PER_DAY % $unitNanos) !== 0) {
+            throw new DateTimeException('Unit must divide into a standard day without remainder');
+        }
+        $nanoOfDay = ($this->epochSecond % LocalTime::SECONDS_PER_DAY) * LocalTime::NANOS_PER_SECOND + $this->nano;
+        return Duration::ofSeconds(0, $nanoOfDay % $unitNanos);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getInstant()

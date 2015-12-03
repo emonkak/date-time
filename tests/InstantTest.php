@@ -316,6 +316,114 @@ class InstantTest extends AbstractTestCase
     }
 
     /**
+     * @dataProvider provideTruncatedTo
+     *
+     * @param integer $second         The base second.
+     * @param integer $nano           The base nano-of-second.
+     * @param integer $unitSecond     The unit second.
+     * @param integer $unitNano       The unit nano-of-second.
+     * @param integer $expectedSecond The expected second of the result.
+     * @param integer $expectedNano   The expected nano of the result.
+     */
+    public function testTruncatedTo($second, $nano, $unitSecond, $unitNano, $expectedSecond, $expectedNano)
+    {
+        $unit = Duration::ofSeconds($unitSecond, $unitNano);
+        $result = Instant::of($second, $nano)->truncatedTo($unit);
+        $this->assertReadableInstantIs($expectedSecond, $expectedNano, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function provideTruncatedTo()
+    {
+        return [
+            [0,          0, 30, 0,          0,         0],
+            [0,          0,  1, 500000000,  0,         0],
+            [1,          0, 30, 0,          0,         0],
+            [1,          0,  1, 500000000,  0,         0],
+            [14, 987654321, 30, 0,          0,         0],
+            [14, 987654321,  1, 500000000, 13, 500000000],
+            [15, 987654321, 30, 0,          0,         0],
+            [15, 987654321,  1, 500000000, 15,         0],
+            [29,         0, 30, 0,          0,         0],
+            [29,         0,  1, 500000000, 28, 500000000],
+            [30,         0, 30, 0,         30,         0],
+            [30,         0,  1, 500000000, 30,         0],
+        ];
+    }
+
+    /**
+     * @expectedException \Brick\DateTime\DateTimeException
+     */
+    public function testTruncatedToLargeUnitThrowsException()
+    {
+        Instant::of(0)->truncatedTo(Duration::ofDays(2));
+    }
+
+    /**
+     * @expectedException \Brick\DateTime\DateTimeException
+     */
+    public function testTruncatedToNotDivisibleUnitThrowsException()
+    {
+        Instant::of(0)->truncatedTo(Duration::ofSeconds(7));
+    }
+
+    /**
+     * @dataProvider provideRoundedTo
+     *
+     * @param integer $second         The base second.
+     * @param integer $nano           The base nano-of-second.
+     * @param integer $unitSecond     The unit second.
+     * @param integer $unitNano       The unit nano-of-second.
+     * @param integer $expectedSecond The expected second of the result.
+     * @param integer $expectedNano   The expected nano of the result.
+     */
+    public function testRoundedTo($second, $nano, $unitSecond, $unitNano, $expectedSecond, $expectedNano)
+    {
+        $unit = Duration::ofSeconds($unitSecond, $unitNano);
+        $result = Instant::of($second, $nano)->roundedTo($unit);
+        $this->assertReadableInstantIs($expectedSecond, $expectedNano, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function provideRoundedTo()
+    {
+        return [
+            [0,          0, 30, 0,          0,         0],
+            [0,          0,  1, 500000000,  0,         0],
+            [1,          0, 30, 0,          0,         0],
+            [1,          0,  1, 500000000,  1, 500000000],
+            [14, 987654321, 30, 0,          0,         0],
+            [14, 987654321,  1, 500000000, 15,         0],
+            [15, 987654321, 30, 0,         30,         0],
+            [15, 987654321,  1, 500000000, 16, 500000000],
+            [29,         0, 30, 0,         30,         0],
+            [29,         0,  1, 500000000, 28, 500000000],
+            [30,         0, 30, 0,         30,         0],
+            [30,         0,  1, 500000000, 30,         0],
+        ];
+    }
+
+    /**
+     * @expectedException \Brick\DateTime\DateTimeException
+     */
+    public function testRoundedToLargeUnitThrowsException()
+    {
+        Instant::of(0)->roundedTo(Duration::ofDays(2));
+    }
+
+    /**
+     * @expectedException \Brick\DateTime\DateTimeException
+     */
+    public function testRoundedToNotDivisibleUnitThrowsException()
+    {
+        Instant::of(0)->roundedTo(Duration::ofSeconds(7));
+    }
+
+    /**
      * @dataProvider providerCompareTo
      *
      * @param integer $s1  The epoch second of the 1st instant.

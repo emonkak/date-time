@@ -28,6 +28,9 @@ class LocalTime implements DateTimeAccessor
     const SECONDS_PER_HOUR   = 3600;
     const SECONDS_PER_DAY    = 86400;
     const NANOS_PER_SECOND   = 1000000000;
+    const NANOS_PER_MINUTE   = 60000000000;
+    const NANOS_PER_HOUR     = 3600000000000;
+    const NANOS_PER_DAY      = 86400000000000;
 
     /**
      * The hour, in the range 0 to 23.
