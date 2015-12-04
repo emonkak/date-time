@@ -118,10 +118,10 @@ class TimeZoneRegionTest extends AbstractTestCase
     /**
      * @dataProvider providerGetTimeZonesForCountry
      *
-     * @param string    $countryCode
-     * @param string ...$expectedIdentifiers
+     * @param string   $countryCode
+     * @param string[] $expectedIdentifiers
      */
-    public function testGetTimeZonesForCountry($countryCode, ...$expectedIdentifiers)
+    public function testGetTimeZonesForCountry($countryCode, array $expectedIdentifiers)
     {
         $identifiers = TimeZoneRegion::getIdentifiersForCountry($countryCode);
 
@@ -134,15 +134,15 @@ class TimeZoneRegionTest extends AbstractTestCase
     public function providerGetTimeZonesForCountry()
     {
         return [
-            ['FR', 'Europe/Paris'],
-            ['GB', 'Europe/London'],
-            ['DE', 'Europe/Berlin', 'Europe/Busingen'],
-            ['CH', 'Europe/Zurich'],
-            ['PL', 'Europe/Warsaw'],
-            ['ES', 'Africa/Ceuta', 'Atlantic/Canary', 'Europe/Madrid'],
-            ['IT', 'Europe/Rome'],
-            ['CN', 'Asia/Shanghai', 'Asia/Urumqi'],
-            ['RE', 'Indian/Reunion'],
+            ['FR', ['Europe/Paris']],
+            ['GB', ['Europe/London']],
+            ['DE', ['Europe/Berlin', 'Europe/Busingen']],
+            ['CH', ['Europe/Zurich']],
+            ['PL', ['Europe/Warsaw']],
+            ['ES', ['Africa/Ceuta', 'Atlantic/Canary', 'Europe/Madrid']],
+            ['IT', ['Europe/Rome']],
+            ['CN', ['Asia/Shanghai', 'Asia/Urumqi']],
+            ['RE', ['Indian/Reunion']],
         ];
     }
 
