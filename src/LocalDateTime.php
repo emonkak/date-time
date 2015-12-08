@@ -801,6 +801,34 @@ class LocalDateTime implements DateTimeAccessor
     }
 
     /**
+     * Returns a copy of this with the time truncated.
+     *
+     * @param Duration $unit
+     *
+     * @return LocalDateTime
+     *
+     * @throws DateTimeException if the unit is not supported
+     */
+    public function truncatedTo(Duration $unit)
+    {
+        return $this->withTime($this->time->truncatedTo($unit));
+    }
+
+    /**
+     * Returns a copy of this with the time rounded.
+     *
+     * @param Duration $unit
+     *
+     * @return LocalDateTime
+     *
+     * @throws DateTimeException if the unit is not supported
+     */
+    public function roundedTo(Duration $unit)
+    {
+        return $this->withTime($this->time->roundedTo($unit));
+    }
+
+    /**
      * Compares this date-time to another date-time.
      *
      * @param LocalDateTime $that The date-time to compare to.

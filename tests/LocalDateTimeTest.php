@@ -1289,6 +1289,110 @@ class LocalDateTimeTest extends AbstractTestCase
     }
 
     /**
+     * @dataProvider provideTruncatedTo
+     *
+     * @param integer $h  The base hour.
+     * @param integer $m  The base minute.
+     * @param integer $s  The base second.
+     * @param integer $n  The base nano.
+     * @param integer $us The number of seconds in the unit.
+     * @param integer $un The nano adjustment of the unit.
+     * @param integer $eh The expected hour of the result time.
+     * @param integer $em The expected minute of the result time.
+     * @param integer $es The expected second of the result time.
+     * @param integer $en The expected nano of the result time.
+     */
+    public function testTruncatedTo($h, $m, $s, $n, $us, $un, $eh, $em, $es, $en)
+    {
+        $unit = Duration::ofSeconds($us, $un);
+        $result = LocalDate::of(2001, 2, 3)->atTime(LocalTime::of($h, $m, $s, $n))->truncatedTo($unit);
+        $this->assertLocalDateTimeIs(2001, 2, 3, $eh, $em, $es, $en, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function provideTruncatedTo()
+    {
+        return [
+            [12, 30,  0,  0, 60 * 30,         0, 12, 30,  0,         0],
+            [12, 34, 56, 78, 60 * 30,         0, 12, 30,  0,         0],
+            [12, 56, 34, 78, 60 * 30,         0, 12, 30,  0,         0],
+            [12, 34, 56, 78,       2, 500000000, 12, 34, 55,         0],
+            [12, 56, 34, 78,       2, 500000000, 12, 56, 32, 500000000],
+            [12, 56, 43, 78,       2, 500000000, 12, 56, 42, 500000000],
+        ];
+    }
+
+    /**
+     * @expectedException \Brick\DateTime\DateTimeException
+     */
+    public function testTruncatedToLargeUnitThrowsException()
+    {
+        LocalDateTime::of(0, 0, 0)->truncatedTo(Duration::ofDays(2));
+    }
+
+    /**
+     * @expectedException \Brick\DateTime\DateTimeException
+     */
+    public function testTruncatedToNotDivisibleUnitThrowsException()
+    {
+        LocalDateTime::of(0, 0, 0)->truncatedTo(Duration::ofSeconds(7));
+    }
+
+    /**
+     * @dataProvider provideRoundedTo
+     *
+     * @param integer $h  The base hour.
+     * @param integer $m  The base minute.
+     * @param integer $s  The base second.
+     * @param integer $n  The base nano.
+     * @param integer $us The number of seconds in the unit.
+     * @param integer $un The nano adjustment of the unit.
+     * @param integer $eh The expected hour of the result time.
+     * @param integer $em The expected minute of the result time.
+     * @param integer $es The expected second of the result time.
+     * @param integer $en The expected nano of the result time.
+     */
+    public function testRoundedTo($h, $m, $s, $n, $us, $un, $eh, $em, $es, $en)
+    {
+        $unit = Duration::ofSeconds($us, $un);
+        $result = LocalDate::of(2001, 2, 3)->atTime(LocalTime::of($h, $m, $s, $n))->roundedTo($unit);
+        $this->assertLocalDateTimeIs(2001, 2, 3, $eh, $em, $es, $en, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function provideRoundedTo()
+    {
+        return [
+            [12, 30,  0,  0, 60 * 30,         0, 12, 30,  0,         0],
+            [12, 34, 56, 78, 60 * 30,         0, 12, 30,  0,         0],
+            [12, 56, 34, 78, 60 * 30,         0, 13,  0,  0,         0],
+            [12, 34, 56, 78,       2, 500000000, 12, 34, 55,         0],
+            [12, 56, 34, 78,       2, 500000000, 12, 56, 35,         0],
+            [12, 56, 43, 78,       2, 500000000, 12, 56, 42, 500000000],
+        ];
+    }
+
+    /**
+     * @expectedException \Brick\DateTime\DateTimeException
+     */
+    public function testRoundedToLargeUnitThrowsException()
+    {
+        LocalDateTime::of(0, 0, 0)->roundedTo(Duration::ofDays(2));
+    }
+
+    /**
+     * @expectedException \Brick\DateTime\DateTimeException
+     */
+    public function testRoundedToNotDivisibleUnitThrowsException()
+    {
+        LocalDateTime::of(0, 0, 0)->roundedTo(Duration::ofSeconds(7));
+    }
+
+    /**
      * @dataProvider providerIsEqualTo
      *
      * @param string  $dateTime1 The base date-time.
