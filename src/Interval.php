@@ -248,7 +248,7 @@ class Interval
     /**
      * Does this time interval overlap the specified time interval.
      *
-     * @param \Brick\DateTime\ReadableInstant $instant
+     * @param \Brick\DateTime\Interval $interval
      *
      * @return boolean
      */
