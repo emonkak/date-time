@@ -262,10 +262,12 @@ class Interval
     }
 
     /**
+     * Returns a string in ISO8601 interval format.
+     *
      * @return string
      */
     public function __toString()
     {
-        return '[' . $this->start . ', ' . $this->end . ')';
+        return $this->start . '/' . $this->end;
     }
 }

@@ -268,8 +268,8 @@ class IntervalTest extends AbstractTestCase
      *
      * @param integer $h1             The 1st interval's start hour.
      * @param integer $m1             The 1st interval's start minute.
-     * @param integer $h2             The 1nd interval's end hour.
-     * @param integer $m2             The 1nd interval's end minute.
+     * @param integer $h2             The 1st interval's end hour.
+     * @param integer $m2             The 1st interval's end minute.
      * @param integer $h3             The 2nd interval's start hour.
      * @param integer $m3             The 2nd interval's start minute.
      * @param integer $h4             The 2nd interval's end hour.
@@ -374,8 +374,8 @@ class IntervalTest extends AbstractTestCase
      *
      * @param integer $h1             The 1st interval's start hour.
      * @param integer $m1             The 1st interval's start minute.
-     * @param integer $h2             The 1nd interval's end hour.
-     * @param integer $m2             The 1nd interval's end minute.
+     * @param integer $h2             The 1st interval's end hour.
+     * @param integer $m2             The 1st interval's end minute.
      * @param integer $h3             The 2nd interval's start hour.
      * @param integer $m3             The 2nd interval's start minute.
      * @param integer $h4             The 2nd interval's end hour.
@@ -511,8 +511,8 @@ class IntervalTest extends AbstractTestCase
      *
      * @param integer $h1             The 1st interval's start hour.
      * @param integer $m1             The 1st interval's start minute.
-     * @param integer $h2             The 1nd interval's end hour.
-     * @param integer $m2             The 1nd interval's end minute.
+     * @param integer $h2             The 1st interval's end hour.
+     * @param integer $m2             The 1st interval's end minute.
      * @param integer $h3             The 2nd interval's start hour.
      * @param integer $m3             The 2nd interval's start minute.
      * @param integer $h4             The 2nd interval's end hour.
@@ -659,8 +659,8 @@ class IntervalTest extends AbstractTestCase
      *
      * @param integer $s1             The 1st interval's start second.
      * @param integer $n1             The 1st interval's start nano second.
-     * @param integer $s2             The 1nd interval's end second.
-     * @param integer $n2             The 1nd interval's end nano second.
+     * @param integer $s2             The 1st interval's end second.
+     * @param integer $n2             The 1st interval's end nano second.
      * @param integer $s3             The 2st interval's start second.
      * @param integer $n3             The 2st interval's start nano second.
      * @param integer $s4             The 2nd interval's end second.
@@ -687,6 +687,32 @@ class IntervalTest extends AbstractTestCase
             [0, 0, 1, 0, 1, 0, 1, 0, false],
             [1, 0, 1, 0, 0, 0, 1, 0, false],
             [1, 1, 1, 1, 1, 1, 1, 1, true],
+        ];
+    }
+
+    /**
+     * @dataProvider providerToString
+     *
+     * @param integer $s1             The interval's start second.
+     * @param integer $n1             The interval's start nano second.
+     * @param integer $s2             The interval's end second.
+     * @param integer $n2             The interval's end nano second.
+     * @param string  $expectedResult The expected result.
+     */
+    public function testToString($s1, $n1, $s2, $n2, $expectedResult)
+    {
+        $interval = new Interval(Instant::of($s1, $n1), Instant::of($s2, $n2));
+
+        $this->assertSame($expectedResult, (string) $interval);
+    }
+
+    /**
+     * @return array
+     */
+    public function providerToString()
+    {
+        return [
+            [0, 0, 1, 100000000, '1970-01-01T00:00Z/1970-01-01T00:00:01.1Z'],
         ];
     }
 }
